@@ -1,96 +1,124 @@
-import java.util.*;
+import java.util.Random;
 
+/**
+ * The Board class represents the game board for a gem-matching game.
+ * It initializes the board, populates it with random gems, and provides methods
+ * to manipulate and display the board.
+ * 
+ * @author John LaMair
+ * @version 02/18/2025
+ */
 public class Board {
-    private int size;
-    private char[][] Board;
+    private int size;          // Size of the board (number of rows and columns)
+    private char[][] board;   // 2D array representing the board
 
-    // constructor method, initalizes board     
+    /**
+     * Constructs a new Board object with the specified size.
+     * Initializes the board with empty spaces.
+     *
+     * @param size The size of the board (number of rows and columns).
+     */
     public Board(int size) {
-        this.Board = new char[size][size];
+        this.size = size;
+        this.board = new char[size][size];
+        initializeEmptyBoard();
+    }
+
+    /**
+     * Initializes the board with empty spaces.
+     */
+    private void initializeEmptyBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                this.Board[i][j] = ' '; // Internal board
+                this.board[i][j] = ' ';
             }
         }
     }
 
-    // name: initializeRandomly
-    // function: fill the empty board array with gems of random color
-    // inputs: none
+    /**
+     * Fills the board with randomly colored gems, ensuring no three gems of the same color
+     * are adjacent in a row or column.
+     */
     public void initializeRandomly() {
-        
-        // array of possible gem colors
-        char[] gemTypes = {'R', 'G', 'B', 'Y', 'P'};
+        char[] gemTypes = {'R', 'G', 'B', 'Y', 'P'}; // Possible gem colors
         Random random = new Random();
-        
-        // for each spot in board array, place a gem of random color
-        for (int i = 0; i < Board.length; i++) {
-            for (int j = 0; j < Board[i].length; j++) {
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 char selectedGem;
-                
-                // make sure gems don't populate in rows or columns of the same color greater than two
                 boolean valid;
+
+                // Ensure no three gems of the same color are adjacent
                 do {
                     valid = true;
                     selectedGem = gemTypes[random.nextInt(gemTypes.length)];
 
-                    if (j >= 2 && Board[i][j - 1] == selectedGem && Board[i][j - 2] == selectedGem) {
+                    // Check horizontal adjacency
+                    if (j >= 2 && board[i][j - 1] == selectedGem && board[i][j - 2] == selectedGem) {
                         valid = false;
                     }
-                    if (i >= 2 && Board[i - 1][j] == selectedGem && Board[i - 2][j] == selectedGem) {
+                    // Check vertical adjacency
+                    if (i >= 2 && board[i - 1][j] == selectedGem && board[i - 2][j] == selectedGem) {
                         valid = false;
                     }
                 } while (!valid);
 
-                Board[i][j] = selectedGem; // Assign gem if valid
+                board[i][j] = selectedGem; // Assign the valid gem
             }
         }
     }
-    
-    // name: printBoard
-    // function: print the board to Processing
-    // inputs: none
+
+    /**
+     * Prints the board to the console in a formatted grid.
+     */
     public void printBoard() {
         System.out.println("Board:");
         System.out.print(" ");
-        for (int a = 65; a < Board.length + 65; a++) {
-            System.out.print(" | " + (char) a);
+        for (int a = 65; a < size + 65; a++) {
+            System.out.print(" | " + (char) a); // Print column headers (A, B, C, ...)
         }
         System.out.println();
         System.out.print("--+");
-        for (int border = 0; border < Board[0].length; border++) {
-            System.out.print("---+");
+        for (int border = 0; border < size; border++) {
+            System.out.print("---+"); // Print top border
         }
         System.out.println();
 
-        for (int i = 0; i < Board.length; i++) {
-            System.out.print(i);
-            for (int j = 0; j < Board[i].length; j++) {
-                System.out.print(" | " + Board[i][j]);
+        // Print each row of the board
+        for (int i = 0; i < size; i++) {
+            System.out.print(i); // Print row number
+            for (int j = 0; j < size; j++) {
+                System.out.print(" | " + board[i][j]); // Print gem
             }
             System.out.println();
             System.out.print("--+");
-            for (int border = 0; border < Board[i].length; border++) {
-                System.out.print("---+");
+            for (int border = 0; border < size; border++) {
+                System.out.print("---+"); // Print row border
             }
             System.out.println();
         }
     }
 
-    // name: getBoard
-    // function: return the Board instance variable array
-    // inputs: none
+    /**
+     * Returns the 2D array representing the board.
+     *
+     * @return The 2D array of the board.
+     */
     public char[][] getBoard() {
-        return Board;
+        return board;
     }
-    
-    // name: swap
-    // function: swap the x and y coordinates of two spots on the board array
-    // input: (
+
+    /**
+     * Swaps the positions of two gems on the board.
+     *
+     * @param x1 The row index of the first gem.
+     * @param y1 The column index of the first gem.
+     * @param x2 The row index of the second gem.
+     * @param y2 The column index of the second gem.
+     */
     public void swap(int x1, int y1, int x2, int y2) {
-        char temp = Board[x1][y1];
-        Board[x1][y1] = Board[x2][y2];
-        Board[x2][y2] = temp;
-        
+        char temp = board[x1][y1];
+        board[x1][y1] = board[x2][y2];
+        board[x2][y2] = temp;
     }
 }
